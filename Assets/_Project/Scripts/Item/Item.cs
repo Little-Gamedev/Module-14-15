@@ -3,19 +3,33 @@ using UnityEngine;
 public abstract class Item : MonoBehaviour
 {
     [SerializeField] private float _destoryTime;
-    private float _time;
-    public abstract float ScaleValue { get; }
+
+    [SerializeField] protected ParticleSystem _effectPrefab;
+
+    private ItemSpawnPoint _spawnPoint;
+
+    protected Transform _effectTransform;
+
+    protected float _time;
 
     private bool _isNotDestory = false;
 
-    private ItemSpawnPoint _spawnPoint;
+    private void Awake()
+    {
+        GetEffectTransform(gameObject.transform);
+    }
+
+    protected Transform GetEffectTransform(Transform transform)
+    {
+        return _effectTransform = transform;
+    }
 
     public void SetSpawnPoint(ItemSpawnPoint spawnPoint)
     {
         _spawnPoint = spawnPoint;
     }
 
-    private void Update()
+    public virtual void Update()
     {
         _time += Time.deltaTime;
 
@@ -38,5 +52,14 @@ public abstract class Item : MonoBehaviour
     public void NotDestroy(bool set)
     {
         _isNotDestory = set;
+    }
+
+    public virtual void UseAbility(Player player)
+    {
+        if (_effectPrefab != null)
+        {
+            Instantiate(_effectPrefab, GetEffectTransform(_effectTransform).position, transform.rotation);
+        }
+        Destroy(gameObject);
     }
 }

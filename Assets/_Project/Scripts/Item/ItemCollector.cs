@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ItemCollector : MonoBehaviour
 {
-    [SerializeField] private Transform _itemContainerTransform;
+    [SerializeField] private ItemContainer _itemContainer;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -19,13 +19,8 @@ public class ItemCollector : MonoBehaviour
 
     private void Collect(Item item)
     {
-        item.NotDestroy(true);
-        item.transform.position = _itemContainerTransform.position;
-        item.transform.SetParent(_itemContainerTransform, true);
-        item.PointToFree();
+        if (!_itemContainer.IsEmpty) return;
 
-        Collider itemCollider = item.gameObject.GetComponent<Collider>();
-        if (itemCollider == null) return;
-        itemCollider.enabled = false;
+        _itemContainer.Put(item);
     }
 }
